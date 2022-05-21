@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { ChangeEvent, FC, memo } from 'react';
 import {
     Avatar,
     Button,
@@ -17,8 +17,9 @@ import CameraIcon from "@material-ui/icons/Camera"
 import EmailIcon from '@material-ui/icons/Email'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import styles from 'Auth.module.css'
+import styles from './Auth.module.css'
 import { useFirebaseAuth } from "../hooks/useFirebaseAuth";
+import { findAllByRole } from "@testing-library/react";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,7 +54,17 @@ const useStyles = makeStyles((theme) => ({
 
 const Auth: FC = () => {
     const classes = useStyles();
-    const { signInGoogle } = useFirebaseAuth()
+    const {
+        signInGoogle,
+        email,
+        password,
+        signUpEmail,
+        signInEmail,
+        isLogin,
+        handleChangeEmail,
+        handleChangePassword,
+        handleChangeIsLogin
+    } = useFirebaseAuth()
 
     return (
         <Grid container component="main" className={classes.root}>
@@ -65,7 +76,7 @@ const Auth: FC = () => {
                         <LockOutlinedIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        {isLogin ? "Login" : "Register"}
                     </Typography>
                     <form className={classes.form} noValidate>
                         <TextField
@@ -78,6 +89,8 @@ const Auth: FC = () => {
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            value={email}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeEmail(e)}
                         />
                         <TextField
                             variant="outlined"
@@ -89,16 +102,46 @@ const Auth: FC = () => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={password}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangePassword(e)}
                         />
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            startIcon={<EmailIcon/>}
+                            onClick={
+                                isLogin ? async () => {
+                                    try {
+                                        await signInEmail()
+                                    } catch (err: any) {
+                                        alert(err.message)
+                                    }
+                                } : async () => {
+                                    try {
+                                        await signUpEmail()
+                                    } catch (err: any) {
+                                        alert(err.message)
+                                    }
+                                }
+                            }
                         >
-                            Sign In
+                            {isLogin ? "Login" : "Register"}
                         </Button>
+
+                        <Grid container>
+                            <Grid item xs>
+                                <span className={styles.login_reset}>Forgot password?</span>
+                            </Grid>
+                            <Grid item xs>
+                                <span className={styles.login_toggleMode}
+                                      onClick={() => handleChangeIsLogin()}
+                                >
+                                {isLogin ? "Create new account?" : "Back to login"}
+                                </span>
+                            </Grid>
+                        </Grid>
 
                         <Button
                             fullWidth
