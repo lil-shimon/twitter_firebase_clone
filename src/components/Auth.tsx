@@ -146,6 +146,11 @@ const Auth: FC = () => {
                             onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangePassword(e)}
                         />
                         <Button
+                            disabled={
+                                isLogin
+                                    ? !email || password.length < 6
+                                    : !username || !email || password.length < 6 || !avatarImage
+                            }
                             fullWidth
                             variant="contained"
                             color="primary"
