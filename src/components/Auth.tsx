@@ -220,6 +220,7 @@ const Auth: FC = () => {
                             fullWidth
                             variant="contained"
                             color="primary"
+                            startIcon={<CameraIcon />}
                             className={classes.submit}
                             onClick={signInGoogle}
                         >
