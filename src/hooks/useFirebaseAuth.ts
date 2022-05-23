@@ -1,5 +1,5 @@
 import { auth, provider, storage } from "../firebase";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useState, MouseEvent } from "react";
 import { useDispatch } from "react-redux";
 import { updateUserProfile } from "../slicers/userSlice";
 
@@ -10,10 +10,32 @@ export const useFirebaseAuth = () => {
     const [username, setUsername] = useState('')
     const [avatarImage, setAvatarImage] = useState<File | null>(null)
     const [isLogin, setIsLogin] = useState(true)
+    const [openModal, setOpenModal] = useState(false)
+    const [resetEmail, setResetEmail] = useState("")
+
+    const sendResetEmail = useCallback(async (e: MouseEvent<HTMLElement>) => {
+        await auth.sendPasswordResetEmail(resetEmail)
+            .then(() => {
+                setOpenModal(false)
+                setResetEmail("")
+            })
+            .catch((err) => {
+                alert(err.message)
+                setResetEmail("")
+            })
+    }, [resetEmail, openModal])
 
     const handleChangeUserName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setUsername(e.target.value)
     }, [username])
+
+    const handleChangeOpenModal = useCallback(() => {
+        setOpenModal(!openModal)
+    }, [openModal])
+
+    const handleChangeResetEmail = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        setResetEmail(e.target.value)
+    }, [resetEmail])
 
     const handleChangeImage = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files![0]) {
@@ -85,6 +107,11 @@ export const useFirebaseAuth = () => {
         username,
         avatarImage,
         handleChangeImage,
-        handleChangeUserName
+        handleChangeUserName,
+        openModal,
+        handleChangeOpenModal,
+        resetEmail,
+        handleChangeResetEmail,
+        sendResetEmail
     }
 }
