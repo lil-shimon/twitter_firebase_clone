@@ -63,7 +63,11 @@ const Auth: FC = () => {
         isLogin,
         handleChangeEmail,
         handleChangePassword,
-        handleChangeIsLogin
+        handleChangeIsLogin,
+        username,
+        handleChangeUserName,
+        avatarImage,
+        handleChangeImage
     } = useFirebaseAuth()
 
     return (
@@ -79,6 +83,42 @@ const Auth: FC = () => {
                         {isLogin ? "Login" : "Register"}
                     </Typography>
                     <form className={classes.form} noValidate>
+                        {!isLogin && (
+                            <>
+                                <TextField
+                                    variant={"outlined"}
+                                    margin={"normal"}
+                                    required
+                                    fullWidth
+                                    id={'username'}
+                                    label={'username'}
+                                    name={'username'}
+                                    autoComplete={'username'}
+                                    autoFocus
+                                    value={username}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => handleChangeUserName(e)}
+                                />
+                                <Box textAlign={"center"}>
+                                    <IconButton>
+                                        <label>
+                                            <AccountCircleIcon
+                                                fontSize={"large"}
+                                                className={
+                                                    avatarImage
+                                                        ? styles.login_addIconLoaded
+                                                        : styles.login_addIcon
+                                                }
+                                            />
+                                            <input
+                                                className={styles.login_hiddenIcon}
+                                                type={"file"}
+                                                onChange={handleChangeImage}
+                                            />
+                                        </label>
+                                    </IconButton>
+                                </Box>
+                            </>
+                        )}
                         <TextField
                             variant="outlined"
                             margin="normal"
