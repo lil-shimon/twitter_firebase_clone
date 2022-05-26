@@ -94,6 +94,10 @@ export const useFirebaseAuth = () => {
         })
     }
 
+    const signOut = async () => {
+        await auth.signOut()
+    }
+
     return {
         signInGoogle,
         email,
@@ -112,6 +116,7 @@ export const useFirebaseAuth = () => {
         handleChangeOpenModal,
         resetEmail,
         handleChangeResetEmail,
-        sendResetEmail
+        sendResetEmail,
+        signOut
     }
 }
