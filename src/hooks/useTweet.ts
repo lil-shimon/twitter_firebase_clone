@@ -21,7 +21,15 @@ export const useTweet = () => {
         setTweetMsg(e.target.value)
     }, [tweetMsg])
 
-    // TODO: refactor
+    const postTweetToFirestore = async (url: string) => {
+        await db.collection("posts").add({
+            avatar: user.photoUrl, image: url,
+            text: tweetMsg,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            username: user.displayName
+        })
+    }
+
     const sendTweet = useCallback((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (tweetImg) {
@@ -41,25 +49,13 @@ export const useTweet = () => {
                 }, async () => {
                     await storage.ref("images").child(fileName).getDownloadURL().then(
                         async (url) => {
-                            await db.collection("posts").add({
-                                avatar: user.photoUrl,
-                                image: url,
-                                text: tweetMsg,
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                username: user.displayName
-                            })
+                            await postTweetToFirestore(url);
                         }
                     )
                 }
             )
         } else {
-            db.collection("posts").add({
-                avatar: user.photoUrl,
-                image: "",
-                text: tweetMsg,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                username: user.displayName
-            })
+            postTweetToFirestore("")
         }
         setTweetMsg('')
         setTweetImg(null)
