@@ -1,6 +1,8 @@
 import styles from './Post.module.css'
-import { FC } from "react";
+import { FC, FormEvent } from "react";
 import { Avatar } from "@material-ui/core";
+import { useComment } from "../hooks/useComment";
+import SendIcon from "@material-ui/icons/Send";
 
 interface Props {
     postId: string
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export const Post: FC<Props> = ({ postId, avatar, image, text, timestamp, username }) => {
+    const { comment, handleChangeComment, newComment } = useComment(postId)
     return (
         <div className={styles.post}>
             <div className={styles.post_avatar}>
@@ -31,9 +34,27 @@ export const Post: FC<Props> = ({ postId, avatar, image, text, timestamp, userna
                 </div>
                 {image && (
                     <div className={styles.post_tweetImage}>
-                        <img src={image} alt={"tweet"} />
+                        <img src={image} alt={"tweet"}/>
                     </div>
                 )}
+                <form onSubmit={newComment}>
+                    <div className={styles.post_form}>
+                        <input
+                            className={styles.post_input}
+                            type={"text"}
+                            placeholder={"Type new comment..."}
+                            value={comment}
+                            onChange={(e) => handleChangeComment(e)}
+                        />
+                        <button
+                            className={comment ? styles.post_button : styles.post_buttonDisable}
+                            disabled={!comment}
+                            type={"submit"}
+                        >
+                            <SendIcon className={styles.post_sendIcon}/>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     )
